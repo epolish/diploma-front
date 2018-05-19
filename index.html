@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Экспертная Система</title>
+		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="css/lib/bootstrap.min.css">
+	</head>
+	<body>
+		<div class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
+			<div class="container">
+				<a href="../" class="navbar-brand">Экспертная Система</a>
+			</div>
+		</div>
+		<div class="container content">
+			<p class="text-primary text-center" data-bind="hidden: !isLoading()">Идет загрузка...</p>
+			<div class="alert alert-dismissible alert-danger" data-bind="visible: errorMessage">
+				<button type="button" class="close" data-bind="click: function () { errorMessage(null); }">&times;</button>
+				<h4 class="alert-heading">Ошибка</h4>
+				<p class="mb-0" data-bind="text: errorMessage"></p>
+			</div>
+			<div class="row">
+				<div class="col-lg text-primary">
+					<!-- ko if: isCurrentStatementHasChild() -->
+					<p class="lead">Выберите один из предложенных ниже вариантов.</p>
+					<!-- /ko -->
+					<!-- ko ifnot: isCurrentStatementHasChild() -->
+					<p class="lead">Ответ:</p>
+					<!-- /ko -->
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg">
+					<h1 class="statement-value" data-bind="text: statement.value()"></h1>
+					<!-- ko if: isCurrentStatementHasChild() -->
+					<div data-bind="foreach: statement.childStatements">
+						<div class="card text-white bg-info mb-3">
+							<div
+								class="card-header btn btn-info"
+								data-bind="text: relationshipValue, click: function () { $parent.loadStatement(value()); }"
+							></div>
+						</div>
+					</div>
+					<!-- /ko -->
+					<!-- ko ifnot: isCurrentStatementHasChild() -->
+					<div class="card text-white bg-success mb-3">
+						<div
+							class="card-header btn btn-success"
+							data-bind="click: function () { initialize(); }"
+						>Перезагрузить</div>
+					</div>
+					<!-- /ko -->
+				</div>
+				<div class="col-lg">
+					<div class="card border-light mb-3 text-primary">
+						<div class="card-header">История</div>
+						<div class="card-body">
+							<ul class="card-text" data-bind="foreach: statementHistory">
+								<li data-bind="text: $parent.getStatementDescription($data)"></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="js/lib/jquery-3.3.1.min.js"></script>
+	<script src="js/lib/bootstrap.min.js"></script>
+	<script src="js/lib/knockout-3.4.2.js"></script>
+	<script src="js/lib/knockout.mapping-latest.js"></script>
+	<script src="js/script.js"></script>
+</html>
