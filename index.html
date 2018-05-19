@@ -21,12 +21,14 @@
 			</div>
 			<div class="row">
 				<div class="col-lg text-primary">
-					<!-- ko if: isCurrentStatementHasChild() -->
-					<p class="lead">Выберите один из предложенных ниже вариантов.</p>
-					<!-- /ko -->
-					<!-- ko ifnot: isCurrentStatementHasChild() -->
-					<p class="lead">Ответ:</p>
-					<!-- /ko -->
+					<p class="lead">
+						<!-- ko if: isCurrentStatementHasChild() -->
+						Выберите один из предложенных ниже вариантов.
+						<!-- /ko -->
+						<!-- ko ifnot: isCurrentStatementHasChild() -->
+						Ответ:
+						<!-- /ko -->
+					</p>
 				</div>
 			</div>
 			<div class="row">

@@ -49,7 +49,11 @@ var StatementViewModel = function (settings) {
             description += self.descriptionCombineAlias;
         }
 
-        return description + statement.value;
+        if (statement.value) {
+            description += statement.value
+        }
+
+        return description;
     };
     self.addCurrentStatementToHistory = function () {
         self.statementHistory.push(new Statement({
