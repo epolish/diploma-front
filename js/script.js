@@ -2,6 +2,7 @@ var Statement = function (data) {
     this.value = null;
     this.childStatements = null;
     this.relationshipValue = null;
+    this.relationshipSupportLevel = null;
 
     if (data !== undefined) {
         if (data.value !== undefined) {
@@ -14,6 +15,10 @@ var Statement = function (data) {
 
         if (data.relationshipValue !== undefined) {
             this.relationshipValue = data.relationshipValue;
+        }
+
+        if (data.relationshipSupportLevel !== undefined) {
+            this.relationshipSupportLevel = data.relationshipSupportLevel;
         }
     }
 };
@@ -28,6 +33,7 @@ var StatementViewModel = function (settings) {
     self.statement = ko.mapping.fromJS(new Statement());
     self.rootStatementValue = settings.rootStatementValue;
     self.descriptionCombineAlias = settings.descriptionCombineAlias;
+    self.descriptionSupportLevelAlias = settings.descriptionSupportLevelAlias;
 
     self.initialize = function () {
         self.errorMessage(null);
@@ -53,13 +59,19 @@ var StatementViewModel = function (settings) {
             description += statement.value
         }
 
+        if (statement.relationshipSupportLevel) {
+            description += self.descriptionSupportLevelAlias;
+            description += statement.relationshipSupportLevel;
+        }
+
         return description;
     };
     self.addCurrentStatementToHistory = function () {
         self.statementHistory.push(new Statement({
             value: self.statement.value(),
             childStatements: self.statement.childStatements(),
-            relationshipValue: self.statement.relationshipValue()
+            relationshipValue: self.statement.relationshipValue(),
+            relationshipSupportLevel: self.statement.relationshipSupportLevel()
         }));
     };
     self.validateResponse = function (response) {
@@ -89,11 +101,13 @@ var StatementViewModel = function (settings) {
             ko.mapping.fromJS({
                 value: response.statement_value,
                 relationshipValue: response.parent_relationship_value,
+                relationshipSupportLevel: response.parent_relationship_support_level_value,
                 childStatements: $(response.child_statements).map(
                     function (index, statement) {
                         return new Statement({
                             value: statement.statement_value,
-                            relationshipValue: statement.relationship_value
+                            relationshipValue: statement.relationship_value,
+                            relationshipSupportLevel: statement.relationship_support_level_value
                         });
                     }
                 ).get()
@@ -123,5 +137,6 @@ ko.bindingHandlers.hidden = (function() {
 ko.applyBindings(new StatementViewModel({
     rootStatementValue: 'root',
     apiBaseUrl: '/statement.php?value=',
-    descriptionCombineAlias: ', значит '
+    descriptionCombineAlias: ', значит ',
+    descriptionSupportLevelAlias: ': УП - '
 }));
