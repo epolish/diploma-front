@@ -33,7 +33,6 @@ var StatementViewModel = function (settings) {
     self.statement = ko.mapping.fromJS(new Statement());
     self.rootStatementValue = settings.rootStatementValue;
     self.descriptionCombineAlias = settings.descriptionCombineAlias;
-    self.descriptionSupportLevelAlias = settings.descriptionSupportLevelAlias;
 
     self.initialize = function () {
         self.errorMessage(null);
@@ -57,11 +56,6 @@ var StatementViewModel = function (settings) {
 
         if (statement.value) {
             description += statement.value
-        }
-
-        if (statement.relationshipSupportLevel) {
-            description += self.descriptionSupportLevelAlias;
-            description += statement.relationshipSupportLevel;
         }
 
         return description;
@@ -137,6 +131,5 @@ ko.bindingHandlers.hidden = (function() {
 ko.applyBindings(new StatementViewModel({
     rootStatementValue: 'root',
     apiBaseUrl: '/statement.php?value=',
-    descriptionCombineAlias: ', значит ',
-    descriptionSupportLevelAlias: ': УП - '
+    descriptionCombineAlias: ', значит '
 }));

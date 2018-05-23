@@ -55,10 +55,22 @@
 				</div>
 				<div class="col-lg">
 					<div class="card border-light mb-3 text-primary">
-						<div class="card-header">История (УП - Уровень поддержки, доверия)</div>
+						<div class="card-header">
+							История:
+							<br/>
+							УП - Уровень поддержки, доверия</div>
 						<div class="card-body">
 							<ul class="card-text" data-bind="foreach: statementHistory">
-								<li data-bind="text: $parent.getStatementDescription($data)"></li>
+								<li>
+									<!-- ko text: $parent.getStatementDescription($data) -->
+									<!-- /ko -->
+									<!-- ko if: $data.relationshipSupportLevel -->
+									<br/>
+									<strong class="text-info">
+										УП - <!-- ko text: $data.relationshipSupportLevel --><!-- /ko -->
+									</strong>
+									<!-- /ko -->
+								</li>
 							</ul>
 						</div>
 					</div>
