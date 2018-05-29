@@ -40,7 +40,7 @@ var StatementViewModel = function (settings) {
         self.errorMessage(null);
         self.statementHistory([]);
 
-        if (!refreshStorage && self.storage.isSet(self.storageHistoryKey)) {
+        if (!refreshStorage && !self.storage.isEmpty(self.storageHistoryKey)) {
             self.initializeFromStorage();
 
             return true;
