@@ -4,3 +4,8 @@
 .statement-value {
     margin-bottom: 5%;
 }
+@media (min-width: 992px) {
+    .container.content {
+        margin-top: 10%;
+    }
+}
