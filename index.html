@@ -13,7 +13,7 @@
 			</div>
 		</div>
 		<div class="container content">
-			<p class="text-primary text-center" data-bind="hidden: !isLoading()">Идет загрузка...</p>
+			<h6 class="text-primary text-center" data-bind="hidden: !isLoading()">Идет загрузка...</h6>
 			<div class="alert alert-dismissible alert-danger" data-bind="visible: errorMessage">
 				<button type="button" class="close" data-bind="click: function () { errorMessage(null); }">&times;</button>
 				<h4 class="alert-heading">Ошибка</h4>
@@ -34,6 +34,18 @@
 			<div class="row">
 				<div class="col-lg">
 					<h1 class="statement-value" data-bind="text: statement.value()"></h1>
+				</div>
+				<div class="col-lg">
+					<div class="card text-white bg-success mb-3">
+						<div
+								class="card-header btn btn-success"
+								data-bind="click: function () { initialize(true); }"
+						>Перезагрузить</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg">
 					<!-- ko if: isCurrentStatementHasChild() -->
 					<div data-bind="foreach: statement.childStatements">
 						<div class="card text-white bg-info mb-3">
@@ -42,14 +54,6 @@
 								data-bind="text: relationshipValue, click: function () { $parent.loadStatement(value()); }"
 							></div>
 						</div>
-					</div>
-					<!-- /ko -->
-					<!-- ko ifnot: isCurrentStatementHasChild() -->
-					<div class="card text-white bg-success mb-3">
-						<div
-							class="card-header btn btn-success"
-							data-bind="click: function () { initialize(); }"
-						>Перезагрузить</div>
 					</div>
 					<!-- /ko -->
 				</div>
@@ -79,6 +83,7 @@
 		</div>
 	</body>
 	<script src="js/lib/jquery-3.3.1.min.js"></script>
+	<script src="js/lib/jquery.storageapi-1.7.3.min.js"></script>
 	<script src="js/lib/bootstrap.min.js"></script>
 	<script src="js/lib/knockout-3.4.2.js"></script>
 	<script src="js/lib/knockout.mapping-latest.js"></script>

@@ -26,18 +26,55 @@ var Statement = function (data) {
 var StatementViewModel = function (settings) {
     var self = this;
 
+    self.storage = settings.storage;
     self.isLoading = ko.observable(false);
     self.apiBaseUrl = settings.apiBaseUrl;
     self.errorMessage = ko.observable(null);
     self.statementHistory = ko.observableArray([]);
+    self.storageHistoryKey = settings.storageHistoryKey;
     self.statement = ko.mapping.fromJS(new Statement());
     self.rootStatementValue = settings.rootStatementValue;
     self.descriptionCombineAlias = settings.descriptionCombineAlias;
 
-    self.initialize = function () {
+    self.initialize = function (refreshStorage) {
         self.errorMessage(null);
         self.statementHistory([]);
+
+        if (!refreshStorage && self.storage.isSet(self.storageHistoryKey)) {
+            self.initializeFromStorage();
+
+            return true;
+        }
+
+        self.storage.set(self.storageHistoryKey, []);
         self.loadStatement(self.rootStatementValue);
+    };
+    self.initializeFromStorage = function () {
+        var storageHistory = $(self.storage.get(self.storageHistoryKey)),
+            lastStatement = storageHistory.last().get(0);
+
+        ko.mapping.fromJS(new Statement({
+            value: lastStatement.value,
+            relationshipValue: lastStatement.relationshipValue,
+            relationshipSupportLevel: lastStatement.relationshipSupportLevel,
+            childStatements: $(lastStatement.childStatements).map(
+                function (index, statement) {
+                    return new Statement({
+                        value: statement.value,
+                        relationshipValue: statement.relationshipValue,
+                        relationshipSupportLevel: statement.relationshipSupportLevel
+                    });
+                }
+            ).get()
+        }), self.statement);
+
+        storageHistory.each(function (index, statement) {
+            self.statementHistory.push(new Statement({
+                value: statement.value,
+                relationshipValue: statement.relationshipValue,
+                relationshipSupportLevel: statement.relationshipSupportLevel
+            }));
+        });
     };
     self.isCurrentStatementHasChild = function () {
         if (!Array.isArray(self.statement.childStatements())) {
@@ -63,10 +100,29 @@ var StatementViewModel = function (settings) {
     self.addCurrentStatementToHistory = function () {
         self.statementHistory.push(new Statement({
             value: self.statement.value(),
-            childStatements: self.statement.childStatements(),
             relationshipValue: self.statement.relationshipValue(),
             relationshipSupportLevel: self.statement.relationshipSupportLevel()
         }));
+    };
+    self.addCurrentStatementToStorageHistory = function () {
+        var currentValue = self.storage.get(self.storageHistoryKey);
+
+        currentValue.push(new Statement({
+            value: self.statement.value(),
+            relationshipValue: self.statement.relationshipValue(),
+            relationshipSupportLevel: self.statement.relationshipSupportLevel(),
+            childStatements: $(self.statement.childStatements()).map(
+                function (index, statement) {
+                    return new Statement({
+                        value: statement.value(),
+                        relationshipValue: statement.relationshipValue(),
+                        relationshipSupportLevel: statement.relationshipSupportLevel()
+                    });
+                }
+            ).get()
+        }));
+
+        self.storage.set(self.storageHistoryKey, currentValue);
     };
     self.validateResponse = function (response) {
         if (response.error !== undefined) {
@@ -108,6 +164,7 @@ var StatementViewModel = function (settings) {
             }, self.statement);
 
             self.addCurrentStatementToHistory();
+            self.addCurrentStatementToStorageHistory();
         }).fail(function(jqxhr, textStatus, error) {
             self.errorMessage('System Exception: ' + error);
         }).always(function () {
@@ -129,7 +186,9 @@ ko.bindingHandlers.hidden = (function() {
 })();
 
 ko.applyBindings(new StatementViewModel({
+    storage: $.localStorage,
     rootStatementValue: 'root',
     apiBaseUrl: '/statement.php?value=',
-    descriptionCombineAlias: ', значит '
+    descriptionCombineAlias: ', значит ',
+    storageHistoryKey: 'statement_history'
 }));
